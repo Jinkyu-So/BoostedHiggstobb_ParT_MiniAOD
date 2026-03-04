@@ -1,0 +1,103 @@
+selection:
+   ### use `&`, `|`, `~` for logical operations on numpy arrays
+   ### can use functions from `math`, `np` (numpy), and `awkward` in the expression
+
+new_variables:
+  ### [format] name: formula
+  ### can use functions from `math`, `np` (numpy), and `awkward` in the expression
+  fj_e: np.sqrt((fj_pt * np.cosh(fj_eta))**2 + fj_mass**2)
+  pfcand_mask: ak.ones_like(pfcand_erel)
+  ### pfcand_pt: np.hypot(pfcand_px, pfcand_py)
+  pfcand_pt_log: np.log(pfcand_ptrel * fj_pt)
+  pfcand_e_log: np.log(pfcand_erel * fj_e)
+  pfcand_ptrel_log: np.log(pfcand_ptrel)
+  pfcand_erel_log: np.log(pfcand_erel)
+  ### pfcand_deltaR: np.hypot(pfcand_deta, pfcand_dphi)
+  ###pfcand_d0: np.tanh(pfcand_d0val)
+  ###pfcand_dz: np.tanh(pfcand_dzval)
+  pfcand_px: pfcand_ptrel * np.cos(pfcand_phirel)
+  pfcand_py: pfcand_ptrel * np.sin(pfcand_phirel)
+  pfcand_pz: pfcand_ptrel * np.sinh(pfcand_etarel)
+  pfcand_energy: pfcand_ptrel * np.cosh(pfcand_etarel) ### massless assumption
+
+preprocess:
+  ### method: [manual, auto] - whether to use manually specified parameters for variable standardization
+  method: manual
+  ### data_fraction: fraction of events to use when calculating the mean/scale for the standardization
+  data_fraction: 0.5
+
+inputs:
+   pf_points:
+      length: 128
+      pad_mode: wrap
+      vars: 
+         - [pfcand_etarel, null]
+         - [pfcand_phirel, null]
+   pf_features:
+      length: 128
+      pad_mode: wrap
+      vars: 
+      ### [format 1]: var_name (no transformation)
+      ### [format 2]: [var_name, 
+      ###              subtract_by(optional, default=None, no transf. if preprocess.method=manual, auto transf. if preprocess.method=auto), 
+      ###              multiply_by(optional, default=1), 
+      ###              clip_min(optional, default=-5), 
+      ###              clip_max(optional, default=5), 
+      ###              pad_value(optional, default=0)]
+         - [pfcand_pt_log, 1.55265, 1.34695]
+         - [pfcand_ptrel_log, -5.07781, 1.42745]
+         - [pfcand_e_log, 1.86712, 1.36674]
+         - [pfcand_erel_log, -5.0861, 1.42439]
+         - [pfcand_deltaR, 0.272417, 0.214068]
+         - [pfcand_charge, null]
+         - [pfcand_isChargedHad, null]
+         - [pfcand_isNeutralHad, null]
+         - [pfcand_isGamma, null]
+         - [pfcand_isEl, null]
+         - [pfcand_isMu, null]
+         - [pfcand_dxy, null]
+         - [pfcand_dxysig, -0.0244521, 6.1217, -5, 5]
+         - [pfcand_dz, null]
+         - [pfcand_dzsig, -0.00308639, 6.36712, -5, 5]
+         - [pfcand_etarel, null]
+         - [pfcand_phirel, null]
+   pf_vectors:
+      length: 128
+      pad_mode: wrap
+      vars: 
+         - [pfcand_px, null]
+         - [pfcand_py, null]
+         - [pfcand_pz, null]
+         - [pfcand_energy, null]
+   pf_mask:
+      length: 128
+      pad_mode: constant
+      vars: 
+         - [pfcand_mask, null]
+
+labels:
+   ### type can be `simple`, `custom`
+   ### [option 1] use `simple` for binary/multi-class classification, then `value` is a list of 0-1 labels
+   type: simple
+
+   value: [label_H_bb, label_QCD_bb, label_QCD_b, label_QCD_cc, label_QCD_c, label_QCD_others]
+   #label_QCD, label_H_bb, label_Hcc, label_Hgg, label_H4q, label_Hqql, label_Zqq, label_Wqq, label_Tbqq, label_Tbl
+   
+   ### [option 2] otherwise use `custom` to define the label, then `value` is a map
+   # type: custom
+   # value: 
+   #    truth_label: label.argmax(1)
+
+observers:
+   #- jet_pt
+   #- jet_eta
+   #- jet_phi
+   #- jet_energy
+   #- jet_nparticles
+   #- jet_sdmass
+   #- jet_tau1
+   #- jet_tau2
+   #- jet_tau3
+   #- jet_tau4
+
+weights:

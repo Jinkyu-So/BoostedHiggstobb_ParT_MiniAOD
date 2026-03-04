@@ -1,0 +1,10 @@
+weaver --data-train '/home/sjk9523/htobb/higgsToBB_files/ntuple_merged_10.root' '/home/sjk9523/htobb/higgsToBB_files/ntuple_merged_11.root''/home/sjk9523/htobb/higgsToBB_files/ntuple_merged_12.root''/home/sjk9523/htobb/higgsToBB_files/ntuple_merged_13.root''/home/sjk9523/htobb/higgsToBB_files/ntuple_merged_14.root' \
+ --data-test '/home/sjk9523/htobb/higgsToBB_testfiles/ntuple_merged_0.root' \
+ --data-config /home/sjk9523/htobb/HbbClass.yaml \
+ --network-config /home/sjk9523/htobb/particle_transformer/networks/example_ParticleTransformer.py \
+ --model-prefix /home/sjk9523/htobb/particle_transformer/train_models/v1/v1 \
+ --gpus 0,1,2,3 --batch-size 256 --start-lr 5e-3 --num-epochs 20 --optimizer ranger \
+ --log /home/sjk9523/htobb/particle_transformer/train_models/logs/train.log 
+
+
+ 
